@@ -15,74 +15,44 @@
         let bullets = [];
         let bulletSpeed = 10;
         let bullet;
+        let enemies = [];
+        let enemySpeed = 5;
+        let enemy;
 
         window.onload = function() {
-                app = new PIXI.Application({
-                    width: 600,
-                    height: 600,
-                    backgroundColor: 0x000000
-                });
+            app = new PIXI.Application({
+                width: 600,
+                height: 600,
+                backgroundColor: 0x000000
+            });
 
-                //document.body.appendChild(app.view);
-                document.querySelector("#gameDiv").appendChild(app.view);
-                // player object
-                /* player = new PIXI.Sprite.from("images/player.png");
-                player.anchor.set(0.5, -3.5);
-                player.x = app.view.width / 2;
-                player.y = app.view.height / 2;
+            //document.body.appendChild(app.view);
+            document.querySelector("#gameDiv").appendChild(app.view);
 
-                app.stage.addChild(player); */
-
-                //keyboard event handlers
-
-                window.addEventListener("keydown", keysDown)
-                window.addEventListener("keyup", keysUp)
+            //keyboard event handlers
+            window.addEventListener("keydown", keysDown)
+            window.addEventListener("keyup", keysUp)
 
 
-                app.ticker.add(gameLoop);
-                keysDiv = document.querySelector('#keys')
+            app.ticker.add(gameLoop);
+            keysDiv = document.querySelector('#keys')
 
 
-                //preload assets
-                app.loader.baseUrl = "images";
-                app.loader
-                    .add("sprite01", "bullet01.png")
-                    .add("sprite02", "bullet02.png")
-                    .add("sprite03", "bullet03.png")
-                    .add("sprite04", "bullet04.png")
-                    .add("sprite05", "bullet05.png")
-                    .add("sprite06", "bullet06.png")
-                    .add("sprite07", "bullet07.png")
-                    .add("sprite08", "bullet08.png")
-                    .add("sprite09", "bullet09.png")
-                    .add("sprite10", "bullet10.png")
-                    .add("bullet", "bullet.png")
-                    .add("player", "player.png")
+            //preload assets
+            app.loader.baseUrl = "images";
+            app.loader
+                .add("bullet", "bullet.png")
+                .add("ufo", "ufo.png")
+                .add("player", "player.png")
 
-                app.loader.onProgress.add(showProgress);
-                app.loader.onComplete.add(doneLoading);
-                app.loader.onError.add(reportError);
+            app.loader.onProgress.add(showProgress);
+            app.loader.onComplete.add(doneLoading);
+            app.loader.onError.add(reportError);
 
-                app.loader.load();
+            app.loader.load();
 
-                /* 
+        }
 
-                    //mouse interactions
-                    app.stage.interactive = true;
-                    app.stage.on("pointermove", movePlayer);
-
-                    function movePlayer(e) {
-                        let position = e.data.global;
-
-                        if (position.x < app.view.width - 20 && position.x > 20)
-                            player.x = position.x;
-                        //player.y = position.y;
-                    }
-                     */
-
-            }
-            // left arrow = 37
-            // right arrow = 39
         function keysDown(e) {
             keys[e.keyCode] = true;
             //console.log(e.keyCode); 
@@ -94,7 +64,6 @@
         }
 
         function gameLoop() {
-            //keysDiv.innerHtml = JSON.stringify(keys);
 
             // left arrow
             if (keys["37"]) {
@@ -113,14 +82,21 @@
                     window.clearTimeout(this.timer);
                 }
                 this.timer = window.setTimeout(function() {
-
                     fireBullet();
-
                 }, 100);
 
             }
             updateBullet();
+            updateEnemy();
+            for (let i = 0; i < bullets.length; i++) {
+                for (let j = 0; j < enemies.length; j++) {
+                    if (collision(bullets[i], enemies[j])) {
+                        app.stage.removeChild(bullets[i]);
+                        app.stage.removeChild(enemies[j]);
+                    }
+                }
 
+            }
 
         }
 
@@ -130,11 +106,14 @@
 
         function doneLoading(e) {
             console.log('DONE LOADING!');
-            player = PIXI.Sprite.from(app.loader.resources.player.texture);
+
+            // player object
+            player = new PIXI.Sprite.from(app.loader.resources.player.texture);
             player.anchor.set(0.5, -3.5);
             player.x = app.view.width / 2;
             player.y = app.view.height / 2;
             app.stage.addChild(player);
+            generateEnemy();
         }
 
         function reportError(e) {
@@ -142,15 +121,10 @@
         }
 
         function fireBullet(e) {
-
             console.log("FIRE!");
             let tempBullet = createBullet();
             bullets.push(tempBullet);
-            console.log(bullets);
-
-
-
-
+            //console.log(bullets);
         }
 
         function createBullet() {
@@ -174,6 +148,49 @@
                 }
             }
 
+        }
+
+        function createEnemy(e) {
+            enemy = new PIXI.Sprite.from(app.loader.resources.ufo.texture);
+            enemy.anchor.set(0.5);
+            enemy.x = Math.random() * app.view.width;
+            enemy.y = 0;
+            enemy.speed = enemySpeed;
+            app.stage.addChild(enemy);
+
+            return enemy;
+        }
+
+        function generateEnemy() {
+
+            let tempEnemy = createEnemy();
+            enemies.push(tempEnemy);
+
+
+            console.log(enemies.length);
+            if (this.timer) {
+                window.clearTimeout(this.timer);
+            }
+
+            this.timer = window.setTimeout(generateEnemy, 900);
+
+        }
+
+        function updateEnemy() {
+            for (let index = 0; index < enemies.length; index++) {
+                enemies[index].position.y += enemies[index].speed;
+                if (enemies[index].position.y > 600) {
+                    app.stage.removeChild(enemies[index]);
+                    enemies.splice(index, 1);
+                }
+            }
+        }
+
+        function collision(bullet, enemy) {
+            let aBox = bullet.getBounds();
+            let bBox = enemy.getBounds();
+
+            return aBox.x == bBox.x && aBox.y == bBox.y;
         }
     </script>
 </head>
