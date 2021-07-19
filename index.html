@@ -7,10 +7,85 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <script src="js/pixi.min.js"></script>
+    <script>
+        let app;
+        let player;
+        let keys = {};
+        let keysDiv;
+
+        window.onload = function() {
+                app = new PIXI.Application({
+                    width: 600,
+                    height: 600,
+                    backgroundColor: 0x000000
+                });
+
+                document.body.appendChild(app.view);
+
+                // player object
+                player = new PIXI.Sprite.from("images/player.png");
+                player.anchor.set(0.5, -3.5);
+                player.x = app.view.width / 2;
+                player.y = app.view.height / 2;
+
+                app.stage.addChild(player);
+
+                //keyboard event handlers
+
+                window.addEventListener("keydown", keysDown)
+                window.addEventListener("keyup", keysUp)
+
+
+                app.ticker.add(gameLoop);
+                keysDiv = document.querySelector('#keys')
+
+                /* 
+
+                    //mouse interactions
+                    app.stage.interactive = true;
+                    app.stage.on("pointermove", movePlayer);
+
+                    function movePlayer(e) {
+                        let position = e.data.global;
+
+                        if (position.x < app.view.width - 20 && position.x > 20)
+                            player.x = position.x;
+                        //player.y = position.y;
+                    }
+                     */
+
+            }
+            // left arrow = 37
+            // right arrow = 39
+        function keysDown(e) {
+            keys[e.keyCode] = true;
+            //console.log(e.keyCode); 
+        }
+
+        function keysUp(e) {
+            keys[e.keyCode] = false;
+            //console.log(e.keyCode);
+        }
+
+        function gameLoop() {
+            //keysDiv.innerHtml = JSON.stringify(keys);
+
+            // left arrow
+            if (keys["37"]) {
+                if (player.x > 20)
+                    player.x -= 5;
+            }
+            // right arrow
+            if (keys["39"]) {
+                if (player.x < app.view.width - 20)
+                    player.x += 5;
+            }
+        }
+    </script>
 </head>
 
 <body>
-
+    <!-- <div id="keys"></div> -->
 </body>
 
 </html>
