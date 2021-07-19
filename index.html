@@ -12,6 +12,9 @@
         let player;
         let keys = {};
         let keysDiv;
+        let bullets = [];
+        let bulletSpeed = 10;
+        let bullet;
 
         window.onload = function() {
                 app = new PIXI.Application({
@@ -53,6 +56,7 @@
                     .add("sprite08", "bullet08.png")
                     .add("sprite09", "bullet09.png")
                     .add("sprite10", "bullet10.png")
+                    .add("bullet", "bullet.png")
                     .add("player", "player.png")
 
                 app.loader.onProgress.add(showProgress);
@@ -103,6 +107,20 @@
                     player.x += 5;
             }
 
+            // space
+            if (keys["32"]) {
+                if (this.timer) {
+                    window.clearTimeout(this.timer);
+                }
+                this.timer = window.setTimeout(function() {
+
+                    fireBullet();
+
+                }, 100);
+
+            }
+            updateBullet();
+
 
         }
 
@@ -121,6 +139,41 @@
 
         function reportError(e) {
             console.log("ERROR : " + e.message);
+        }
+
+        function fireBullet(e) {
+
+            console.log("FIRE!");
+            let tempBullet = createBullet();
+            bullets.push(tempBullet);
+            console.log(bullets);
+
+
+
+
+        }
+
+        function createBullet() {
+            bullet = PIXI.Sprite.from(app.loader.resources.bullet.texture);
+            bullet.anchor.set(0.5, -8.5);
+            bullet.x = player.x;
+            bullet.y = player.y;
+            bullet.speed = bulletSpeed;
+            app.stage.addChild(bullet);
+
+            return bullet;
+        }
+
+        function updateBullet(delta) {
+            for (let index = 0; index < bullets.length; index++) {
+                bullets[index].position.y -= bullets[index].speed;
+                //console.log(bullets[index].position.y);
+                if (bullets[index].position.y < -200) {
+                    app.stage.removeChild(bullets[index]);
+                    bullets.splice(index, 1);
+                }
+            }
+
         }
     </script>
 </head>
