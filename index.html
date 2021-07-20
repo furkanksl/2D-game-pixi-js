@@ -20,6 +20,7 @@
         let enemy;
         let scoreTable;
         let score = 0;
+        let isGameOver = false;
 
         window.onload = function() {
             app = new PIXI.Application({
@@ -91,6 +92,8 @@
             }
             updateBullet();
             updateEnemy();
+            updateLevel();
+            gameOver()
             for (let i = 0; i < bullets.length; i++) {
                 for (let j = 0; j < enemies.length; j++) {
                     if (collision(bullets[i], enemies[j])) {
@@ -127,9 +130,11 @@
         }
 
         function fireBullet(e) {
-            console.log("FIRE!");
-            let tempBullet = createBullet();
-            bullets.push(tempBullet);
+            if (!isGameOver) {
+                let tempBullet = createBullet();
+                bullets.push(tempBullet);
+            }
+
             //console.log(bullets);
         }
 
@@ -178,7 +183,7 @@
                 window.clearTimeout(this.timer);
             }
 
-            this.timer = window.setTimeout(generateEnemy, 2500);
+            this.timer = window.setTimeout(generateEnemy, 1000);
 
         }
 
@@ -195,13 +200,26 @@
         function collision(bullet, enemy) {
             let aBox = bullet.getBounds();
             let bBox = enemy.getBounds();
-            console.log(aBox.x + " --- " + bBox.x)
-            return (((aBox.x >= bBox.x) &&
-                        (aBox.x <= bBox.x + bBox.width)) ||
-                    ((aBox.x + aBox.width >= bBox.x) &&
-                        (aBox.x + aBox.width <= bBox.x + bBox.width))) &&
-                (aBox.y - aBox.height <= bBox.y + bBox.height);
-            //return aBox.x + aBox.width == bBox.x && aBox.x == bBox.y + bBox.width && aBox.y + aBox.height > bBox.y && aBox.y < bBox.y + bBox.height;
+            return (((aBox.x >= bBox.x) && (aBox.x <= bBox.x + bBox.width)) || ((aBox.x + aBox.width >= bBox.x) && (aBox.x + aBox.width <= bBox.x + bBox.width))) &&
+                (aBox.y <= bBox.y + bBox.height);
+
+        }
+
+        function updateLevel() {
+            if (score == 100)
+                enemySpeed = 5;
+            else if (score == 200)
+                enemySpeed = 7;
+        }
+
+        function gameOver() {
+            for (let i = 0; i < enemies.length; i++) {
+                if (collision(player, enemies[i])) {
+                    app.stage.removeChild(player);
+                    isGameOver = true;
+                }
+
+            }
         }
     </script>
 </head>
