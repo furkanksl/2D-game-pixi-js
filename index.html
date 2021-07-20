@@ -16,7 +16,7 @@
         let bulletSpeed = 10;
         let bullet;
         let enemies = [];
-        let enemySpeed = 5;
+        let enemySpeed = 3;
         let enemy;
         let scoreTable;
         let score = 0;
@@ -178,7 +178,7 @@
                 window.clearTimeout(this.timer);
             }
 
-            this.timer = window.setTimeout(generateEnemy, 2000);
+            this.timer = window.setTimeout(generateEnemy, 2500);
 
         }
 
@@ -196,7 +196,11 @@
             let aBox = bullet.getBounds();
             let bBox = enemy.getBounds();
             console.log(aBox.x + " --- " + bBox.x)
-            return ((aBox.x - aBox.width / 2 >= bBox.x) && (aBox.x - aBox.width / 2 <= bBox.x + bBox.width)) || ((aBox.x + aBox.width / 2 >= bBox.x) && (aBox.x + aBox.width / 2 <= bBox.x + bBox.width)) && aBox.y - aBox.height <= bBox.y + bBox.height && aBox.y + aBox.height > bBox.y;
+            return (((aBox.x >= bBox.x) &&
+                        (aBox.x <= bBox.x + bBox.width)) ||
+                    ((aBox.x + aBox.width >= bBox.x) &&
+                        (aBox.x + aBox.width <= bBox.x + bBox.width))) &&
+                (aBox.y - aBox.height <= bBox.y + bBox.height);
             //return aBox.x + aBox.width == bBox.x && aBox.x == bBox.y + bBox.width && aBox.y + aBox.height > bBox.y && aBox.y < bBox.y + bBox.height;
         }
     </script>
