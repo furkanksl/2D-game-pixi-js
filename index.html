@@ -18,6 +18,8 @@
         let enemies = [];
         let enemySpeed = 5;
         let enemy;
+        let scoreTable;
+        let score = 0;
 
         window.onload = function() {
             app = new PIXI.Application({
@@ -28,7 +30,8 @@
 
             //document.body.appendChild(app.view);
             document.querySelector("#gameDiv").appendChild(app.view);
-
+            scoreTable = document.querySelector("#scoreTable");
+            scoreTable.textContent = 'Score : ' + score;
             //keyboard event handlers
             window.addEventListener("keydown", keysDown)
             window.addEventListener("keyup", keysUp)
@@ -94,6 +97,8 @@
                         //app.stage.removeChild(bullets[i]);
                         app.stage.removeChild(enemies[j]);
                         enemies.splice(j, 1);
+                        score += 5;
+                        scoreTable.textContent = 'Score : ' + score;
                     }
                 }
 
@@ -154,7 +159,7 @@
         function createEnemy(e) {
             enemy = new PIXI.Sprite.from(app.loader.resources.ufo.texture);
             enemy.anchor.set(0.5);
-            enemy.x = Math.random() * app.view.width - 32;
+            enemy.x = (Math.random() * (app.view.width - enemy.width / 2)) + enemy.width / 2;
             enemy.y = 0;
             enemy.speed = enemySpeed;
             app.stage.addChild(enemy);
@@ -199,7 +204,9 @@
 
 <body>
     <!-- <div id="keys"></div> -->
-    <div id="gameDiv"></div>
+    <div id="gameDiv" style="margin-top: 60px;  z-index: 1;">
+        <p id="scoreTable" style="margin-bottom: -40px;margin-left: 20px; color: #d5a642; z-index: 99;position: relative; font-size: 30px;  "></p>
+    </div>
 </body>
 
 </html>
