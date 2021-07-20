@@ -91,8 +91,9 @@
             for (let i = 0; i < bullets.length; i++) {
                 for (let j = 0; j < enemies.length; j++) {
                     if (collision(bullets[i], enemies[j])) {
-                        app.stage.removeChild(bullets[i]);
+                        //app.stage.removeChild(bullets[i]);
                         app.stage.removeChild(enemies[j]);
+                        enemies.splice(j, 1);
                     }
                 }
 
@@ -153,7 +154,7 @@
         function createEnemy(e) {
             enemy = new PIXI.Sprite.from(app.loader.resources.ufo.texture);
             enemy.anchor.set(0.5);
-            enemy.x = Math.random() * app.view.width;
+            enemy.x = Math.random() * app.view.width - 32;
             enemy.y = 0;
             enemy.speed = enemySpeed;
             app.stage.addChild(enemy);
@@ -172,7 +173,7 @@
                 window.clearTimeout(this.timer);
             }
 
-            this.timer = window.setTimeout(generateEnemy, 900);
+            this.timer = window.setTimeout(generateEnemy, 2000);
 
         }
 
@@ -189,8 +190,9 @@
         function collision(bullet, enemy) {
             let aBox = bullet.getBounds();
             let bBox = enemy.getBounds();
-
-            return aBox.x == bBox.x && aBox.y == bBox.y;
+            console.log(aBox.x + " --- " + bBox.x)
+            return ((aBox.x - aBox.width / 2 >= bBox.x) && (aBox.x - aBox.width / 2 <= bBox.x + bBox.width)) || ((aBox.x + aBox.width / 2 >= bBox.x) && (aBox.x + aBox.width / 2 <= bBox.x + bBox.width)) && aBox.y - aBox.height <= bBox.y + bBox.height && aBox.y + aBox.height > bBox.y;
+            //return aBox.x + aBox.width == bBox.x && aBox.x == bBox.y + bBox.width && aBox.y + aBox.height > bBox.y && aBox.y < bBox.y + bBox.height;
         }
     </script>
 </head>
